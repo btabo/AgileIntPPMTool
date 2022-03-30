@@ -5,11 +5,12 @@ import Header from './components/Layer/Header';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AddProject from "./components/Project/AddProject";
+import {Provider} from "react-redux";
+import store from './store';
 
 function App() {
-  return (
-    
-      
+  return (    
+      <Provider store={store}>
         <div className="App">
             <Header />
             <Router>
@@ -20,7 +21,7 @@ function App() {
               </Routes>            
             </Router>
         </div>
-    
+      </Provider>
   );
 }
 
