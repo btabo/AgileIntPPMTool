@@ -47,9 +47,39 @@ public class ProjectTaskService {
         return projectTaskRepository.save(projectTask);
     }
 
-    public Iterable<ProjectTask> findBacklogById(String id) {
-        ofNullable(projectRepository.findByProjectIdentifier(id))
-                .orElseThrow(() -> new ProjectNotFoundException("Project with ID = '" + id + "' not found"));
-        return projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
+    public Iterable<ProjectTask> findBacklogById(String backlogId) {
+        ofNullable(projectRepository.findByProjectIdentifier(backlogId))
+                .orElseThrow(() -> new ProjectNotFoundException("Project with ID = '" + backlogId + "' not found"));
+        return projectTaskRepository.findByProjectIdentifierOrderByPriority(backlogId);
+    }
+
+    public ProjectTask findPTByProjectSequence(String backlogId, String projectSequence) {
+        Backlog backlog = ofNullable(backlogRepository.findByProjectIdentifier(backlogId))
+                .orElseThrow(() -> new ProjectNotFoundException("Project with ID = '" + backlogId + "' not found"));
+
+        ProjectTask projectTask = ofNullable(projectTaskRepository.findByProjectSequence(projectSequence))
+                .orElseThrow(() -> new ProjectNotFoundException("Project Task '" + projectSequence + "' not found"));
+
+        if (!projectTask.getProjectIdentifier().equals(backlogId)) {
+            throw new ProjectNotFoundException("Project Task '" + projectSequence + "' does not exist in project '" + backlogId + "'");
+        }
+
+        return projectTask;
+    }
+
+    public ProjectTask updateByProjectSequence(ProjectTask updatedProjectTask, String backlogId, String projectSequence) {
+        Backlog backlog = ofNullable(backlogRepository.findByProjectIdentifier(backlogId))
+                .orElseThrow(() -> new ProjectNotFoundException("Project with ID = '" + backlogId + "' not found"));
+
+        ProjectTask projectTask = ofNullable(projectTaskRepository.findByProjectSequence(updatedProjectTask.getProjectSequence()))
+                .orElseThrow(() -> new ProjectNotFoundException("Project Task '" + projectSequence + "' not found"));
+
+        projectTaskRepository.save(updatedProjectTask);
+
+        if (!projectTask.getProjectIdentifier().equals(backlogId)) {
+            throw new ProjectNotFoundException("Project Task '" + projectSequence + "' does not exist in project '" + backlogId + "'");
+        }
+
+        return projectTask;
     }
 }

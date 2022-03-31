@@ -35,4 +35,20 @@ public class BacklogController {
     public ResponseEntity<Iterable<ProjectTask>> getProjectBacklog(@PathVariable String backlogId) {
         return new ResponseEntity<>(projectTaskService.findBacklogById(backlogId), HttpStatus.OK);
     }
+
+    @GetMapping("/{backlogId}/{ptId}")
+    public ResponseEntity<ProjectTask> getProjectTask(@PathVariable String backlogId, @PathVariable String ptId) {
+        return new ResponseEntity<>(projectTaskService.findPTByProjectSequence(backlogId, ptId), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{backlogId}/{ptId}")
+    public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask projectTask, BindingResult result,
+                                                         @PathVariable String backlogId, @PathVariable String ptId) {
+        ResponseEntity<?> errorMap = mapValidationErrorService.validate(result);
+        if (errorMap != null) return errorMap;
+
+        ProjectTask updatedProjectTask = projectTaskService.updateByProjectSequence(projectTask, backlogId, ptId);
+        return new ResponseEntity(updatedProjectTask, HttpStatus.OK);
+    }
+
 }
