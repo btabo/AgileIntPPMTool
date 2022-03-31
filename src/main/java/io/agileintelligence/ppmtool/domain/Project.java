@@ -1,9 +1,8 @@
 package io.agileintelligence.ppmtool.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +11,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor @Setter @Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@Builder(toBuilder = true)
+@ToString
 public class Project {
 
     @Id
@@ -23,7 +27,7 @@ public class Project {
     private String projectName;
 
     @NotBlank
-    @Size(min=4, max=5, message = "Please use 4 or 5 characters")
+    @Size(min = 4, max = 5, message = "Please use 4 or 5 characters")
     @Column(updatable = false, unique = true)
     private String projectIdentifier;
 
@@ -41,6 +45,11 @@ public class Project {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    @JsonIgnore
+    private Backlog backlog;
+
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -50,4 +59,6 @@ public class Project {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+
 }
