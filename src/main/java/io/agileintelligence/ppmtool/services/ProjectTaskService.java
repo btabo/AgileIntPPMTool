@@ -56,30 +56,26 @@ public class ProjectTaskService {
     public ProjectTask findPTByProjectSequence(String backlogId, String projectSequence) {
         Backlog backlog = ofNullable(backlogRepository.findByProjectIdentifier(backlogId))
                 .orElseThrow(() -> new ProjectNotFoundException("Project with ID = '" + backlogId + "' not found"));
-
         ProjectTask projectTask = ofNullable(projectTaskRepository.findByProjectSequence(projectSequence))
                 .orElseThrow(() -> new ProjectNotFoundException("Project Task '" + projectSequence + "' not found"));
 
         if (!projectTask.getProjectIdentifier().equals(backlogId)) {
             throw new ProjectNotFoundException("Project Task '" + projectSequence + "' does not exist in project '" + backlogId + "'");
         }
-
         return projectTask;
     }
 
     public ProjectTask updateByProjectSequence(ProjectTask updatedProjectTask, String backlogId, String projectSequence) {
-        Backlog backlog = ofNullable(backlogRepository.findByProjectIdentifier(backlogId))
-                .orElseThrow(() -> new ProjectNotFoundException("Project with ID = '" + backlogId + "' not found"));
-
-        ProjectTask projectTask = ofNullable(projectTaskRepository.findByProjectSequence(updatedProjectTask.getProjectSequence()))
-                .orElseThrow(() -> new ProjectNotFoundException("Project Task '" + projectSequence + "' not found"));
-
+        ProjectTask projectTask = findPTByProjectSequence(backlogId, projectSequence);
         projectTaskRepository.save(updatedProjectTask);
-
         if (!projectTask.getProjectIdentifier().equals(backlogId)) {
             throw new ProjectNotFoundException("Project Task '" + projectSequence + "' does not exist in project '" + backlogId + "'");
         }
-
         return projectTask;
+    }
+
+    public void deletePTByProjectSequence(String backlogId, String projectSequence) {
+        ProjectTask projectTask = findPTByProjectSequence(backlogId, projectSequence);
+        projectTaskRepository.delete(projectTask);
     }
 }
