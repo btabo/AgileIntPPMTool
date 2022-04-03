@@ -18,6 +18,7 @@ class AddProjectTask extends Component {
             "priority": 0,
             "dueDate": "",
             "projectIdentifier": id,
+            "status": "",
             "errors": {}
         };
 
@@ -42,7 +43,8 @@ class AddProjectTask extends Component {
             acceptanceCriteria: this.state.acceptanceCriteria,
             priority: this.state.priority,
             dueDate: this.state.dueDate,
-            projectIdentifier: this.state.projectIdentifier
+            projectIdentifier: this.state.projectIdentifier,
+            status: this.state.status
         };
         console.log(newTask);
         this.props.addProjectTask(this.state.projectIdentifier, newTask, this.props.history);
