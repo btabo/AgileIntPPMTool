@@ -24,7 +24,6 @@ class Backlog extends Component {
             if (tasks[i].props.project_task.status === "DONE") {
                 doneItems.push(tasks[i]);
             }
-            console.log(tasks[i]);
         }
 
         return (
